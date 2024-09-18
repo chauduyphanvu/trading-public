@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Crypto Whale Watcher</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/streamgraph.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <style>
+        body {
+            background-color: #1a1a1a;
+            padding: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+<div class="btn-group" role="group" aria-label="Timeframe radio toggle button group">
+    <input type="radio" class="btn-check" name="timespanRadio" id="btn15M" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn15M">15M</label>
+
+    <input type="radio" class="btn-check" name="timespanRadio" id="btn1H" autocomplete="off" checked>
+    <label class="btn btn-outline-primary" for="btn1H">1H</label>
+
+    <input type="radio" class="btn-check" name="timespanRadio" id="btn2H" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn2H">2H</label>
+
+    <input type="radio" class="btn-check" name="timespanRadio" id="btn5H" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn5H">5H</label>
+
+    <input type="radio" class="btn-check" name="timespanRadio" id="btn1D" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn1D">1D</label>
+</div>
+
+<br><br>
+
+<div class="btn-group" role="group" aria-label="Line chart radio toggle button group">
+    <input type="radio" class="btn-check" name="btnradio" id="selectAll" autocomplete="off" checked>
+    <label class="btn btn-outline-primary" for="selectAll">All</label>
+
+    <input type="radio" class="btn-check" name="btnradio" id="selectNone" autocomplete="off">
+    <label class="btn btn-outline-primary" for="selectNone">None</label>
+
+    <input type="radio" class="btn-check" name="btnradio" id="showFirstHalf" autocomplete="off">
+    <label class="btn btn-outline-primary" for="showFirstHalf">1-20</label>
+
+    <input type="radio" class="btn-check" name="btnradio" id="showLastHalf" autocomplete="off">
+    <label class="btn btn-outline-primary" for="showLastHalf">20-40</label>
+</div>
+<!-- <br><br> -->
+<!-- <button type="button" class="btn btn-outline-primary" id="exportChart">Export as PNG</button> -->
+<br><br>
+<!-- <form class="d-flex" role="search" style="width: 400px">
+    <input class="form-control me-2" type="search" placeholder="Enter addresses, comma-separated"
+        aria-label="Search" id="holderFilter">
+    <button class="btn btn-outline-success" id="filterHolders">Filter</button>
+</form> -->
+<!-- <div class="alert alert-primary" role="alert">
+    Tip: click on the hamburger icon in the chart's top right corner to view the chart in full screen.</div> -->
+
+<div id="container" style="width: 100%; height: 100vh; margin: 0 auto"></div>
+<br><br>
+<div id="stl-container" style="width: 100%; height: 100vh; margin: 0 auto"></div>
+<br><br>
+<div class="btn-group" role="group" aria-label="Timeframe radio toggle button group">
+    <input type="radio" class="btn-check" name="streamGraphTimeSpanRadio" id="btn15MStream" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn15MStream">15M</label>
+
+    <input type="radio" class="btn-check" name="streamGraphTimeSpanRadio" id="btn1HStream" autocomplete="off"
+           checked>
+    <label class="btn btn-outline-primary" for="btn1HStream">1H</label>
+
+    <input type="radio" class="btn-check" name="streamGraphTimeSpanRadio" id="btn2HStream" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn2HStream">2H</label>
+
+    <input type="radio" class="btn-check" name="streamGraphTimeSpanRadio" id="btn5HStream" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn5HStream">5H</label>
+
+    <input type="radio" class="btn-check" name="streamGraphTimeSpanRadio" id="btn1DStream" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btn1DStream">1D</label>
+</div>
+<br><br>
+<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+    <input type="radio" class="btn-check" name="streambtnradio" id="streamShowAll" autocomplete="off" checked>
+    <label class="btn btn-outline-primary" for="streamShowAll">All</label>
+
+    <input type="radio" class="btn-check" name="streambtnradio" id="streamShowNone" autocomplete="off">
+    <label class="btn btn-outline-primary" for="streamShowNone">None</label>
+
+    <input type="radio" class="btn-check" name="streambtnradio" id="streamShowFirstHalf" autocomplete="off">
+    <label class="btn btn-outline-primary" for="streamShowFirstHalf">1-20</label>
+
+    <input type="radio" class="btn-check" name="streambtnradio" id="streamShowLastHalf" autocomplete="off">
+    <label class="btn btn-outline-primary" for="streamShowLastHalf">20-40</label>
+</div>
+
+<br><br>
+<!-- Highcharts stream graph -->
+<!-- <div class="alert alert-primary" role="alert">
+    Tip: click on the hamburger icon in the chart's top right corner to view the chart in full screen.</div> -->
+<div id="streamGraphContainer" style="width: 100%; height: 1000px; margin: 0 auto"></div>
+
+<script src="data-processor.js"></script>
+<script src="utils.js"></script>
+<script src="script.js"></script>
+<!-- <script src="stream-graph.js"></script> -->
+<script src="line-graph-highchart.js"></script>
+<!-- <script src="line-graph.js"></script> -->
+<script src="percentage-graph.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

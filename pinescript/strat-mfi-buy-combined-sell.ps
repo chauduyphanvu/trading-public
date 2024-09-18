@@ -1,0 +1,57 @@
+//@version=5
+//
+// TradingView Pine Script Strategy: Today: MFI Buy + Combined Sell
+//
+// This strategy is designed for days when the price is greater than or equal to the Volume Weighted Average Price (VWAP).
+// The strategy generates buy signals based on the Money Flow Index (MFI) and sell signals based on a combination of 
+// MFI, Relative Strength Index (RSI), Williams %R, and Stochastic indicators. 
+//
+// The strategy executes trades only on the current day.
+
+strategy("Today: MFI Buy + Combined Sell", overlay=true)
+
+// Define the input parameters for the indicators
+mfiLength = input.int(14, title="MFI Length")
+rsiLength = input.int(14, title="RSI Length")
+williamsRLength = input.int(14, title="Williams %R Length")
+stochLength = input.int(14, title="Stochastic Length")
+
+lowerThreshold = input.int(20, title="MFI Lower Threshold")
+upperThreshold = input.int(80, title="MFI Upper Threshold")
+
+// Calculate the indicators
+mfi = ta.mfi(hlc3, mfiLength)
+rsi = ta.rsi(close, rsiLength)
+williamsR = ta.wpr(williamsRLength)
+stoch = ta.stoch(close, high, low, stochLength)
+
+// Plot the MFI
+plot(mfi, title="MFI", color=color.blue)
+hline(lowerThreshold, "Lower Threshold", color=color.green)
+hline(upperThreshold, "Upper Threshold", color=color.red)
+
+// Generate buy and sell signals
+buySignal = ta.crossover(mfi, lowerThreshold)
+
+// Sell conditions
+mfiSell = ta.crossunder(mfi, upperThreshold)
+rsiSell = ta.crossunder(rsi, 70)
+williamsRSell = ta.crossunder(williamsR, -20)
+stochSell = ta.crossunder(stoch, 20) // Assuming a threshold of 20 for Stochastic, modify as needed
+
+sellSignal = mfiSell or rsiSell or (williamsRSell and stochSell)
+
+// Define the date filter for today
+today = timestamp(year(timenow), month(timenow), dayofmonth(timenow), 00, 00)
+tomorrow = timestamp(year(timenow), month(timenow), dayofmonth(timenow) + 1, 00, 00)
+isToday = (time >= today) and (time < tomorrow)
+
+// Plot buy and sell signals on the chart for today
+plotshape(series=buySignal and isToday, location=location.belowbar, color=color.green, style=shape.arrowup, title="Buy Signal")
+plotshape(series=sellSignal and isToday, location=location.abovebar, color=color.red, style=shape.arrowdown, title="Sell Signal")
+
+// Execute trades based on the signals for today
+if (buySignal and isToday)
+    strategy.entry("Buy", strategy.long)
+if (sellSignal and isToday)
+    strategy.close("Buy")

@@ -1,0 +1,44 @@
+{
+  "base_coin": "myro",
+  "data": [
+    {
+      "end_date": "2023-11-13",
+      "correlations": [
+        {
+          "coin": "orca",
+          "correlation": -1.0
+        },
+        {
+          "coin": "bitcoin",
+          "correlation": -1.0
+        }
+      ]
+    },
+    {
+      "end_date": "2023-11-14",
+      "correlations": [
+        {
+          "coin": "orca",
+          "correlation": -0.29336843049776173
+        },
+        {
+          "coin": "bitcoin",
+          "correlation": 0.5389814317566004
+        }
+      ]
+    },
+    {
+      "end_date": "2023-11-15",
+      "correlations": [
+        {
+          "coin": "orca",
+          "correlation": 0.03493049603570652
+        },
+        {
+          "coin": "bitcoin",
+          "correlation": 0.016792410483890317
+        }
+      ]
+    }
+  ]
+}

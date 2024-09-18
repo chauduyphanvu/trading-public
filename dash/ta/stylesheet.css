@@ -1,0 +1,36 @@
+body {
+    background-color: #1a1a1a;
+    color: white;
+}
+
+@keyframes flashGreen {
+    0%, 100% {
+        background-color: rgba(0, 128, 0, 0.75);
+    }
+    50% {
+        background-color: #1a1a1a;
+    }
+}
+
+@keyframes flashRed {
+    0%, 100% {
+        background-color: rgba(255, 0, 0, 0.75);
+    }
+    50% {
+        background-color: #1a1a1a;
+    }
+}
+
+.flash-green {
+    animation: flashGreen 500ms infinite;
+}
+
+.flash-red {
+    animation: flashRed 500ms infinite;
+}
+
+/* Add margin for spacing between checkboxes */
+.btn-group-small .btn-check,
+.btn-group-small .btn-outline-primary {
+    margin: 5px;
+}

@@ -1,0 +1,41 @@
+//@version=5
+// Works best in 30m timeframe
+strategy("[TSLA] Keltner Channel Strategy", overlay=true)
+
+// Define the input parameters for the Keltner Channel
+length = input.int(9, title="EMA Length")
+mult = input.float(0.1, title="ATR Multiplier")
+
+// Input for the start date
+startYear = input.int(2024, title="Start Year")
+startMonth = input.int(8, title="Start Month")
+startDay = input.int(1, title="Start Day")
+
+// Calculate the Keltner Channel
+ema = ta.ema(close, length)
+atr = ta.atr(length)
+upperBand = ema + mult * atr
+lowerBand = ema - mult * atr
+
+// Plot the Keltner Channel
+plot(ema, title="EMA", color=color.blue)
+plot(upperBand, title="Upper Band", color=color.red)
+plot(lowerBand, title="Lower Band", color=color.green)
+
+// Generate buy and sell signals based on Keltner Channel conditions
+buySignal = ta.crossover(close, lowerBand)
+sellSignal = ta.crossunder(close, upperBand)
+
+// Define the date filter for the start date
+startTime = timestamp(startYear, startMonth, startDay, 00, 00)
+isInDateRange = (time >= startTime)
+
+// Plot buy and sell signals on the chart within the date range
+plotshape(series=buySignal and isInDateRange, location=location.belowbar, color=color.green, style=shape.arrowup, title="Buy Signal")
+plotshape(series=sellSignal and isInDateRange, location=location.abovebar, color=color.red, style=shape.arrowdown, title="Sell Signal")
+
+// Execute trades based on the signals within the date range
+if (buySignal and isInDateRange)
+    strategy.entry("Buy", strategy.long)
+if (sellSignal and isInDateRange)
+    strategy.close("Buy")

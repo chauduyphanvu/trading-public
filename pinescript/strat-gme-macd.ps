@@ -1,0 +1,37 @@
+//@version=5
+strategy("[$GME] MACD Buy & Sell", overlay=true)
+
+// Define the input parameters for the MACD
+fastLength = input.int(12, title="MACD Fast Length")
+slowLength = input.int(26, title="MACD Slow Length")
+signalSmoothing = input.int(9, title="MACD Signal Smoothing")
+
+// Input for the start date
+startYear = input.int(2024, title="Start Year")
+startMonth = input.int(7, title="Start Month")
+startDay = input.int(20, title="Start Day")
+
+// Calculate the MACD
+[macdLine, signalLine, _] = ta.macd(close, fastLength, slowLength, signalSmoothing)
+
+// Plot the MACD and Signal Line
+plot(macdLine, title="MACD Line", color=color.blue)
+plot(signalLine, title="Signal Line", color=color.red)
+
+// Generate buy and sell signals based on MACD crossings and ensure conditions
+buySignal = ta.crossover(macdLine, signalLine) and (macdLine < -0.05)
+sellSignal = ta.crossunder(macdLine, signalLine) and (macdLine > 0.14)
+
+// Define the date filter for the start date
+startTime = timestamp(startYear, startMonth, startDay, 00, 00)
+isInDateRange = (time >= startTime)
+
+// Plot buy and sell signals on the chart within the date range
+plotshape(series=buySignal and isInDateRange, location=location.belowbar, color=color.green, style=shape.arrowup, title="Buy Signal")
+plotshape(series=sellSignal and isInDateRange, location=location.abovebar, color=color.red, style=shape.arrowdown, title="Sell Signal")
+
+// Execute trades based on the signals within the date range
+if (buySignal and isInDateRange)
+    strategy.entry("Buy", strategy.long)
+if (sellSignal and isInDateRange)
+    strategy.close("Buy")
